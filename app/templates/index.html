@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+{% load static %}
+{% load poll_extras %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Sidebar Dashboard Template</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{% static 'LineProgressbar-master/jquery.lineProgressbar.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  </head>
+  <body>
+
+    <input type="checkbox" id="check">
+    <!--header area start-->
+    <header>
+      <label for="check">
+        <i class="fas fa-bars" id="sidebar_btn"></i>
+      </label>
+      <div class="left_area">
+        <h3> <span> </span></h3>
+      </div>
+      <div class="right_area">
+        <a href='{% url "login"  %}' class="logout_btn">Logout</a>
+      </div>
+    </header>
+    <!--header area end-->
+    <!--sidebar start-->
+    <div class="sidebar">
+      <center>
+        <img src="{% static 'img/1.png' %}" class="profile_image" alt="">
+        <h4>Patricia Breugel</h4>
+      </center>
+
+      <a href="#"><i class="fas fa-cogs"></i><span>Працівники</span></a>
+
+    </div>
+    <!--sidebar end-->
+
+    <div class="content">
+      <div class="employee-btn">
+        <form action="" method="POST">
+                      {% csrf_token %}
+        {% if day_exist == 1 %}
+        <button type="submit" class="presense-btn pull-left" name="setTasks">
+          Поставити завдання
+        </button>
+          {% else %}
+          <a class="presense-btn-grey pull-left">
+          Завдання уже поставлені!
+        </a>
+        {% endif %}
+        </form>
+        <button type="button" class="add-new-employee-btn" data-toggle="modal" data-target="#addTitle">
+          + Додати посаду
+        </button>
+          <button type="button" class="add-new-employee-btn" data-toggle="modal" data-target="#addDepartment">
+          + Додати департамент
+        </button>
+        <button type="button" class="add-new-employee-btn" data-toggle="modal" data-target="#addEmployee">
+          + Додати співробітника
+        </button>
+      </div>
+
+            <div class="modal fade" id="addTitle" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Додати нову посаду</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="POST">
+                      {% csrf_token %}
+                      <label>Назва посади</label>
+                        {{ new_title.title_name }}
+                  <button type="submit" class="btn-submit" name="addNewTitle">Додати</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addDepartment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Додати новий департамент</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="closeButton">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="POST">
+                      {% csrf_token %}
+                      <label>Назва департаменту</label>
+                        {{ new_department.dept_name }}
+                  <button type="submit" class="btn-submit" name="addNewDepartment">Додати</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class="modal fade" id="addEmployee" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Додати нового співробітника</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                      <label>Ім'я</label>
+                        {{ new_employee.first_name }}
+                      <label>Прізвище</label>
+                        {{ new_employee.last_name }}
+                      <label>Стать
+                        <select class="gender_option" name="gender">
+                          <option value="F">Жінка</option>
+                          <option value="M">Чоловік</option>
+                        </select>
+                      </label>
+                      <label>День народження</label>
+                      {{new_employee.birth_date}}
+                      <label>Дата прийому на роботу</label>
+                      {{new_employee.hire_date}}
+                      <label>Email</label>
+                        {{ new_employee.email }}
+                      <label>номер телефону</label>
+                        {{ new_employee.number }}
+                      <label>Фото</label>
+                <div class="upload">
+                       {{ new_employee.img }}
+                </div>
+
+ <div class="row mt-2">
+
+   <div class="col-md-4">
+                    <label>Департамент</label>
+                      <select class="departament_option" name="departament_addNewEmployee">
+                        {% for dept in departments %}
+                            <option value='{{dept.pk}}'>{{dept.dept_name}}
+                        {% endfor %}
+                        </select>
+   </div>
+   <div class="col-md-4">
+                  <div class="title">
+                  <div>
+                <label class="title_label">Посада</label>
+                      <select class="title_option" name="title">
+                        {% for title in titles %}
+                            <option value='{{title.title_no}}'>{{title.title_name}}
+                        {% endfor %}
+                        </select>
+
+                  </div>
+                  </div>
+   </div>
+     <div class="col-md-4">
+                  <label>Керівна посада
+                      <input iplaceholder="" type="checkbox" value="clicked" name="manager_check"></label>
+
+                </div>
+
+                </div>
+
+                  <button type="submit" class="btn-submit" name="addNewEmployee">Додати</button>
+                    </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="team-table-container">
+        <div class="search-filter-sort-btn">
+          <div class="search-container">
+            <form action="">
+              <input type="text" placeholder="Search team, name, email, number" name="search" autocomplete="off">
+              <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+          </div>
+          <div class="sort-btn">
+            <button>Сортувати за</button>
+            <ul>
+              <li><a href="#">ім'ям (А-Я)</a></li>
+              <li><a href="#">ім'ям (Я-А)</a></li>
+              <li><a href="#">рейтингом <i class="fa fa-arrow-down"></i></a></li>
+              <li><a href="#">рейтингом <i class="fa fa-arrow-up"></i></a></li>
+            </ul>
+          </div>
+        </div>
+
+      <div class="team-table">
+        <div class="container">
+          <div class="row">
+          {% for emp in employyes_info %}
+
+            <div class="col-lg-3">
+
+
+                <input value="{{managers}}" class="js-manager" hidden>
+
+          {% if emp.emp_no in presence and emp.emp_no in presencelog_emp %}
+            <a data-toggle="modal" href="" class="e employee_grey" data-target="#employeeDetails"
+               data-toggle="modal" id="{{emp.emp_no}}"
+               data-emp_no = {{emp.emp_no}}
+            data-first_name = {{emp.first_name}}
+            data-last_name = {{emp.last_name}}
+            data-title = '{"title":"{{emp.title_name}}"}'
+            data-img = {{emp.img}}
+            data-dept_name = '{"dept_name":"{{emp.dept_name}}"}'
+            data-number = '{"number":"{{emp.number}}"}'
+            data-email = {{emp.email}}
+            data-gender = {{emp.gender}}
+            data-presence = 'no_replaced'>
+              {% elif emp.emp_no in presence and emp.emp_no not in presencelog_emp %}
+              <a data-toggle="modal" href="" class="e employee_red" data-target="#employeeDetails"
+               data-toggle="modal" id="{{emp.emp_no}}"
+               data-emp_no = {{emp.emp_no}}
+            data-first_name = {{emp.first_name}}
+            data-last_name = {{emp.last_name}}
+            data-title = '{"title":"{{emp.title_name}}"}'
+            data-img = {{emp.img}}
+            data-dept_name = '{"dept_name":"{{emp.dept_name}}"}'
+            data-number = '{"number":"{{emp.number}}"}'
+            data-email = {{emp.email}}
+            data-gender = {{emp.gender}}
+            data-presence = 'no'>
+              {%else%}
+              <a data-toggle="modal" href="" class="e employee" data-target="#employeeDetails"
+               data-toggle="modal" id="{{emp.emp_no}}"
+               data-emp_no = {{emp.emp_no}}
+            data-first_name = {{emp.first_name}}
+            data-last_name = {{emp.last_name}}
+            data-title = '{"title":"{{emp.title_name}}"}'
+            data-img = {{emp.img}}
+            data-dept_name = '{"dept_name":"{{emp.dept_name}}"}'
+            data-number = '{"number":"{{emp.number}}"}'
+            data-email = {{emp.email}}
+            data-gender = {{emp.gender}}
+              data-presence = 'yes'>
+              {%endif%}
+              <p id="p_department" class="p_titles_text" value="{{emp.dept_name}}">{{emp.dept_name}}</p>
+              {% if emp.gender == "F" and emp.img == 'None' or emp.gender == "F" and emp.img == None or emp.gender == "F" and emp.img == ''%}
+                <img src="{% static 'img/7.png' %}">
+              {% elif emp.gender == "M" and emp.img == 'None' or emp.gender == "M" and emp.img == None or emp.gender == "M" and emp.img == '' %}
+               <img src="{% static 'img/avatar-svgrepo-com.svg' %}">
+              {% else %}
+              <img src="../media/{{emp.img}}">
+
+              {% endif %}
+              <div class="p_info">
+                <p class="p_name">{{emp.first_name}} {{ emp.last_name}}</p>
+                <div class="p_titles">
+                <p id="p_titles" class="p_titles_text">{{emp.title_name}}</p>
+                </div>
+                <p class="p_number">{{emp.number}}</p>
+                <p class="p_email">{{emp.email}}</p>
+              </div>
+            </a>
+            </div>
+
+            {% endfor %}
+
+            <div class = "employee_details">
+            <div class="modal modal-left fade" id="employeeDetails" tabindex="-1" role="dialog" aria-labelledby="left_modal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="employee_empdetails">
+                    <img id="img" src="">
+                    </div>
+
+                      <div class="employee_empdetails_column">
+                        <div class="empdetails_row">
+                        <lable class="employee_empdetails_container_label">Ім'я</lable>
+                      <div class="employee_empdetails_container_row">
+                    <div id="first_name" class="empdetails_container_row_first"></div>
+                      <div id="last_name"></div>
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="empdetails_row">
+                        <lable class="employee_empdetails_container_label">Пошта</lable>
+                        <div class="employee_empdetails_container_row">
+                        <div id="email" class="empdetails_container_row_first"></div>
+
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="empdetails_row">
+                        <lable class="employee_empdetails_container_label">Номер телефону</lable>
+                        <div class="employee_empdetails_container_row">
+                        <div id="number" class="empdetails_container_row_first"></div>
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="empdetails_row">
+                        <lable class="employee_empdetails_container_label">Департамент</lable>
+                        <div class="employee_empdetails_container_row">
+                        <div id="dept_name" class="empdetails_container_row_first"></div>
+                          <div id="manager_field" value=""></div>
+                        </div>
+                        </div>
+                        <hr>
+                        <div class="empdetails_row">
+                        <lable class="employee_empdetails_container_label">Посада</lable>
+                          <div class="employee_empdetails_container_row">
+                        <div id="title" class="empdetails_container_row_first"></div>
+
+                          </div>
+                        </div>
+                        <hr>
+                     </div>
+
+                      <div>
+
+                        </div>
+
+
+
+                    <div class="modal-footer" id="edit_modal">
+
+
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+              </div>
+            <div class="modal fade" id="empPresence" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Додати відсутність</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="POST">
+                      {% csrf_token %}
+                      <div class="row mt-2 empPresenceRow" >
+
+                                    <div class="col-md-6"><label class="labels">Початок</label><input type="date" class="form-control" name="presence_from_date" required></div>
+                                    <div class="col-md-6"><label class="labels">Кінець</label><input type="date" class="form-control" name="presence_to_date" required></div>
+                                </div>
+                  <button type="submit" class="btn-submit" name="empPresence">Додати</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+    <script>
+    $('.e').click(function(){
+    $('#first_name').html($(this).data('first_name'));
+    $('#last_name').html($(this).data('last_name'));
+    $('#dept_name').html($(this).data('dept_name').dept_name);
+    $id = $(this).attr('id');
+    $('#title').html($(this).data('title').title);
+    $('#number').html($(this).data('number').number);
+
+    $('#email').html($(this).data('email'));
+
+    var m = $( ".js-manager" ).val();
+    if (m.includes($(this).data('emp_no'))!=false) {
+      $( "#manager_field" ).text('(керівник департаменту)');
+    }
+    else {
+      $( "#manager_field" ).text(' ' );
+    }
+    var id = $(this).attr('id');
+    var presence = $(this).data('presence');
+    if (presence == 'no') {
+      if ($("#change_submit_button").length) {
+        $("#change_submit_button").remove();
+        $("#change_presence_submit_button").remove();
+        $("#replaced").remove();
+        var urlTemplate = "<a class='btn btn-danger pull-left' id='change_submit_button' href='{% url 'replacement' 9999 %}'>Знайти заміну</a>";
+        var url = urlTemplate.replace("9999", id);
+        $('#edit_modal').append(url);
+      } else {
+        $("#change_submit_button").remove();
+        $("#change_presence_submit_button").remove();
+        $("#replaced").remove();
+        var urlTemplate = "<a class='btn btn-danger pull-left' id='change_submit_button' href='{% url 'replacement' 9999 %}'>Знайти заміну</a>";
+        var url = urlTemplate.replace("9999", id);
+        $('#edit_modal').append(url);
+      }
+    } else if (presence == 'no_replaced') {
+       if ($("#replaced").length) {
+         $("#change_submit_button").remove();
+         $("#change_presence_submit_button").remove();
+         $("#replaced").remove();
+         var urlTemplate = "<p class='btn btn-grey pull-left' id='replaced'>Працівник відсутній!</a>";
+
+         $('#edit_modal').append(urlTemplate);
+       } else {
+         $("#change_submit_button").remove();
+         $("#change_presence_submit_button").remove();
+         $("#replaced").remove();
+         var urlTemplate = "<p class='btn btn-grey pull-left' id='replaced'>Працівник відсутній!</a>";
+
+         $('#edit_modal').append(urlTemplate);
+       }
+    } else {
+      $("#change_submit_button").remove();
+      $("#replaced").remove();
+      if ($("#change_presence_submit_button").length) {
+        $("#change_presence_submit_button").remove();
+        var urlTemplate = "<button class='btn btn-danger pull-left' id='change_presence_submit_button' data-toggle=\"modal\" data-target=\"#empPresence\">Відсутній</button>";
+        $('#edit_modal').append(urlTemplate);
+      }
+      else {
+        $("#change_presence_submit_button").remove();
+        $("#replaced").remove();
+        var urlTemplate = "<button class='btn btn-danger pull-left' id='change_presence_submit_button' data-toggle=\"modal\" data-target=\"#empPresence\">Відсутній</button>";
+        $('#edit_modal').append(urlTemplate);
+      }
+    }
+
+    var id = $(this).attr('id');
+
+    if ($( "#edit_submit_button" ).length) {
+      $( "#edit_submit_button" ).remove();
+      $( "#close_submit_button" ).remove();
+      var urlTemplate = "<a class='btn btn-primary' id='edit_submit_button' href='{% url 'edit' 9999 %}?next={{ request.path|urlencode }}'>Редагувати</a>" +
+              "<button type=\"button\" class=\"btn btn-secondary\" id='close_submit_button' data-dismiss=\"modal\">Закрити</button>";
+      var url = urlTemplate.replace("9999", id);
+      $('#edit_modal').append(url);
+    }
+    else {
+      $( "#edit_submit_button" ).remove();
+      $( "#close_submit_button" ).remove();
+      var urlTemplate = "<a class='btn btn-primary' id='edit_submit_button' href='{% url 'edit' 9999 %}?next={{ request.path|urlencode }}'>Редагувати</a>" +
+              "<button type=\"button\" class=\"btn btn-secondary\" id='close_submit_button' data-dismiss=\"modal\">Закрити</button>";
+      var url = urlTemplate.replace("9999", id);
+      $('#edit_modal').append(url);
+    }
+    emp_no = $(this).data('emp_no');
+    if ($( "#empPresenceid" ).length) {
+      $( "#empPresenceid" ).remove();
+      var urlTemplate = "<input id=\"empPresenceid\" type=\"text\" value=\"9999\" name=\"emp_no\" hidden>";
+      var url = urlTemplate.replace("9999", $(this).data('emp_no'));
+      $(".empPresenceRow").append(url);
+      $('#emp_no').val($(this).data('emp_no'));
+    }
+    else {
+      $( "#empPresenceid" ).remove();
+      var urlTemplate = "<input id=\"empPresenceid\" type=\"text\" value=\"9999\" name=\"emp_no\" hidden>";
+      var url = urlTemplate.replace("9999", $(this).data('emp_no'));
+      $(".empPresenceRow").append(url);
+      $('#emp_no').val($(this).data('emp_no'));
+    }
+
+    if ((($(this).data('img') == 'None') && ($(this).data('gender') == 'M'))) {
+      $("#img").attr("src","../media/images/avatar-svgrepo-com.svg");
+    }
+    else if (($(this).data('img') == 'None') && ($(this).data('gender') == 'F')) {
+      $("#img").attr("src","../media/images/7.png");
+    }
+    else if (($(this).data('img') == '') && ($(this).data('gender') == 'M'))
+    {
+      $("#img").attr("src","../media/images/avatar-svgrepo-com.svg");
+    }
+    else if (($(this).data('img') == '') && ($(this).data('gender') == 'F'))
+    {
+      $("#img").attr("src","../media/images/7.png");
+    }
+    else {
+      $("#img").attr("src",'../media/'+ $(this).data('img'));
+    }
+
+
+    });
+    function myFunction() {
+      document.body.style.overflow = 'hidden';
+    }
+    function validateForm() {
+      var x = document.forms["myForm"]["dept_no"].value;
+      if (x == "") {
+        document.getElementById("errorMessage_firstname").innerHTML = 'Введіть ім\'я!';
+      }
+      var x = document.forms["myForm"]["dept_name"].value;
+      if (x == "") {
+        document.getElementById("errorMessage_lastname").innerHTML = 'Введіть прізвище!';
+      }
+      return false;
+    }
+
+    /*
+    document.getElementById('closeButton').onclick = function()
+    {
+       document.getElementById("errorMessage_lastname").hidden = true;
+       document.getElementById("errorMessage_firstname").hidden = true;
+    }
+
+     */
+
+
+
+    </script>
+
+  </body>
+</html>

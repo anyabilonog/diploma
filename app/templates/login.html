@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+{% load poll_extras %}
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Flat Design Login Form Example</title>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="login-pages">
+  <div class="forms">
+
+    <form class="login-forms" method="post">
+      {% csrf_token %}
+      {% for message in messages %}
+    <li  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+      <input type="text" name="email" placeholder="email"/>
+      <input type="text" name="password" placeholder="password"/>
+
+      <button type="submit" class="btn-submit" name="login_man">Login</button>
+
+
+    </form>
+  </div>
+</div>
+<!-- partial -->
+
+
+</body>
+</html>
